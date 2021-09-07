@@ -7,3 +7,5 @@ edition = "2018"
 
 [dependencies]
 rustdoc-index = "0.2.0"
+linearf = { path = "../../linearf/model/core" }
+async-trait = "*"
