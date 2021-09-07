@@ -5,15 +5,20 @@ use linearf::{
 };
 use std::sync::Arc;
 
-#[derive(Debug)]
-pub struct Rustdoc {}
+pub struct Rustdoc {
+    _state: Shared<State>,
+    _rt: AsyncRt
+}
 
 impl New for Rustdoc {
     fn new(_state: &Shared<State>, _rt: &AsyncRt) -> Self
     where
         Self: Sized
     {
-        Self {}
+        Self {
+            _state: _state.clone(),
+            _rt: _rt.clone()
+        }
     }
 }
 
