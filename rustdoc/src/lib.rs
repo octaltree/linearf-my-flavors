@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use linearf::{
     source::{Generator, Transmitter},
-    AsyncRt, Flow, Item, New, Session, Shared, State
+    AsyncRt, Flow, Item, MaybeUtf8, New, Session, Shared, State
 };
 use std::sync::Arc;
 
@@ -43,14 +43,7 @@ impl Generator for Rustdoc {
             tx.chunk(
                 (0..1000)
                     .map(|j| i + j + 1)
-                    .map(|idx| Item {
-                        idx,
-                        value: linearf::StringBytes::String(i.to_string()),
-                        r#type: "",
-                        view: None,
-                        view_for_matcing: None,
-                        query: None
-                    })
+                    .map(|id| Item::new(id, "", MaybeUtf8::Utf8(i.to_string())))
                     .collect::<Vec<_>>()
             )?;
         }
