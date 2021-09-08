@@ -28,7 +28,7 @@ impl Generator for Rustdoc {
         &mut self,
         tx: Sender<Item>,
         flow: &Arc<Flow>
-    ) -> Result<(), Box<dyn std::error::Error>> {
+    ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         for i in 0..1000000 {
             tx.send(Item {
                 idx: i + 1,
