@@ -26,18 +26,18 @@ impl New for Rustdoc {
 impl Generator for Rustdoc {
     async fn generate(
         &mut self,
-        tx: Sender<Arc<Item>>,
+        tx: Sender<Item>,
         flow: &Arc<Flow>
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
         for i in 0..1000000 {
-            tx.send(Arc::new(Item {
+            tx.send(Item {
                 idx: i + 1,
                 value: linearf::StringBytes::String(i.to_string()),
                 r#type: "",
                 view: None,
                 view_for_matcing: None,
                 query: None
-            }))?;
+            })?;
         }
         Ok(())
     }
