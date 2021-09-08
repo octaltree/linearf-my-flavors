@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 use linearf::{
-    source::{Generator, Sender},
+    source::{Generator, Transmitter},
     AsyncRt, Flow, Item, New, Session, Shared, State
 };
 use std::sync::Arc;
@@ -26,18 +26,33 @@ impl New for Rustdoc {
 impl Generator for Rustdoc {
     async fn generate(
         &mut self,
-        tx: Sender<Item>,
+        tx: Transmitter,
         flow: &Arc<Flow>
     ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-        for i in 0..1000000 {
-            tx.send(Item {
-                idx: i + 1,
-                value: linearf::StringBytes::String(i.to_string()),
-                r#type: "",
-                view: None,
-                view_for_matcing: None,
-                query: None
-            })?;
+        // for i in 0..1000000 {
+        //    tx.item(Item {
+        //        idx: i + 1,
+        //        value: linearf::StringBytes::String(i.to_string()),
+        //        r#type: "",
+        //        view: None,
+        //        view_for_matcing: None,
+        //        query: None
+        //    })?;
+        //}
+        for i in 0..1000 {
+            tx.chunk(
+                (0..1000)
+                    .map(|j| i + j + 1)
+                    .map(|idx| Item {
+                        idx,
+                        value: linearf::StringBytes::String(i.to_string()),
+                        r#type: "",
+                        view: None,
+                        view_for_matcing: None,
+                        query: None
+                    })
+                    .collect::<Vec<_>>()
+            )?;
         }
         Ok(())
     }
