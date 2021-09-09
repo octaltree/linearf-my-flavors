@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use linearf::{matcher::Matcher, AsyncRt, Flow, Item, New, Score, Shared, State};
+use linearf::{matcher::Matcher, AsyncRt, Flow, Item, New, Query, Score, Shared, State};
 use std::sync::Arc;
 
 pub struct Concat {}
@@ -23,7 +23,7 @@ impl New for Substring {
 
 #[async_trait]
 impl Matcher for Substring {
-    async fn score(&mut self, flow: &Arc<Flow>, query: &str, item: &Item) -> Score {
+    async fn score(&mut self, flow: &Arc<Flow>, query: Query, item: &Item) -> Score {
         // TODO
         Score::new(item.id, vec![0])
     }
