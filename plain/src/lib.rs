@@ -23,7 +23,7 @@ impl New for Substring {
 
 #[async_trait]
 impl Matcher for Substring {
-    async fn score(&mut self, flow: &Arc<Flow>, query: Query, item: &Item) -> Score {
+    async fn score(&mut self, flow: &Arc<Flow>, query: &Query, item: &Item) -> Score {
         // TODO
         Score::new(item.id, vec![0])
     }

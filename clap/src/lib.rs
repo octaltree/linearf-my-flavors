@@ -12,5 +12,5 @@ impl New for Clap {
 }
 
 impl Matcher for Clap {
-    async fn score(&mut self, flow: &Arc<Flow>, query: Query, item: &Item) -> Score { todo!() }
+    async fn score(&mut self, flow: &Arc<Flow>, query: &Query, item: &Item) -> Score { todo!() }
 }
