@@ -1,54 +1,47 @@
 use async_trait::async_trait;
-use linearf::{
-    source::{Generator, Transmitter},
-    AsyncRt, Flow, Item, MaybeUtf8, New, Session, Shared, State
-};
+use linearf::source::*;
+use linearf::State;
+use linearf::Vars;
+use linearf::{Item, MaybeUtf8, New, Shared};
 use std::sync::Arc;
 
 pub struct Rustdoc {
     _state: Shared<State>,
-    _rt: AsyncRt
 }
 
 impl New for Rustdoc {
-    fn new(_state: &Shared<State>, _rt: &AsyncRt) -> Self
+    fn new(_state: &Shared<State>) -> Self
     where
-        Self: Sized
+        Self: Sized,
     {
         Self {
             _state: _state.clone(),
-            _rt: _rt.clone()
         }
     }
 }
 
+impl HasSourceParams for Rustdoc {
+    type Params = ();
+}
+
 #[async_trait]
-impl Generator for Rustdoc {
-    async fn generate(
-        &mut self,
-        tx: Transmitter,
-        flow: &Arc<Flow>
-    ) -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
-        // for i in 0..1000000 {
-        //    tx.item(Item {
-        //        idx: i + 1,
-        //        value: linearf::StringBytes::String(i.to_string()),
-        //        r#type: "",
-        //        view: None,
-        //        view_for_matcing: None,
-        //        query: None
-        //    })?;
-        //}
+impl SimpleGenerator<()> for Rustdoc {
+    async fn generate(&self, tx: Transmitter, _senario: (&Arc<Vars>, &Arc<Self::Params>)) {
         for i in 0..1000 {
             tx.chunk(
                 (0..1000)
                     .map(|j| i + j + 1)
                     .map(|id| Item::new(id, "", MaybeUtf8::Utf8(i.to_string())))
-                    .collect::<Vec<_>>()
-            )?;
+                    .collect::<Vec<_>>(),
+            )
         }
-        Ok(())
     }
 
-    async fn reusable(&self, _prev: &Session, _flow: &Arc<Flow>) -> bool { false }
+    async fn reusable(
+        &self,
+        _prev: (&Arc<Vars>, &Arc<Self::Params>),
+        _senario: (&Arc<Vars>, &Arc<Self::Params>),
+    ) -> bool {
+        false
+    }
 }
