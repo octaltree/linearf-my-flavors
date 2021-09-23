@@ -1,8 +1,7 @@
-use async_trait::async_trait;
 use linearf::source::*;
 use linearf::State;
 use linearf::Vars;
-use linearf::{Item, MaybeUtf8, New, Shared};
+use linearf::{async_trait, Item, MaybeUtf8, New, Shared};
 use std::sync::Arc;
 
 pub struct Rustdoc {

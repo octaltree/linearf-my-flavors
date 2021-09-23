@@ -8,4 +8,3 @@ edition = "2018"
 [dependencies]
 rustdoc-index = "0.2.0"
 linearf = { path = "../../lnf/model/core" }
-async-trait = "*"

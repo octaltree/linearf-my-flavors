@@ -1,34 +1,55 @@
-use async_trait::async_trait;
-use linearf::{matcher::Matcher, AsyncRt, Flow, Item, New, Query, Score, Shared, State};
-use std::sync::Arc;
+pub use matchers::Substring;
+pub use sources::Concat;
 
-pub struct Concat {}
-
-pub struct Substring {
-    _state: Shared<State>,
-    _rt: AsyncRt
+mod sources {
+    pub struct Concat {}
 }
 
-impl New for Substring {
-    fn new(_state: &Shared<State>, _rt: &AsyncRt) -> Self
-    where
-        Self: Sized
-    {
-        Self {
-            _state: _state.clone(),
-            _rt: _rt.clone()
+mod matchers {
+    use linearf::session::Vars;
+    use linearf::{async_trait, New, Shared, State};
+    use linearf::{matcher::*, Item};
+    use std::sync::Arc;
+
+    pub struct Substring {
+        _state: Shared<State>,
+    }
+
+    impl New for Substring {
+        fn new(_state: &Shared<State>) -> Self
+        where
+            Self: Sized,
+        {
+            Self {
+                _state: _state.clone(),
+            }
+        }
+    }
+
+    impl IsMatcher for Substring {
+        type Params = ();
+    }
+
+    #[async_trait]
+    impl SimpleScorer<()> for Substring {
+        async fn score(
+            &self,
+            (vars, _): (&Arc<Vars>, &Arc<Self::Params>),
+            item: &Arc<Item>,
+        ) -> Score {
+            return if item.view_for_matcing().find(&vars.query).is_some() {
+                Score::new(item.id, vec![1])
+            } else {
+                Score::new(item.id, vec![0])
+            };
+        }
+
+        async fn reusable(
+            &self,
+            (prev, _): (&Arc<Vars>, &Arc<Self::Params>),
+            (senario, _): (&Arc<Vars>, &Arc<Self::Params>),
+        ) -> bool {
+            prev.query == senario.query
         }
     }
 }
-
-#[async_trait]
-impl Matcher for Substring {
-    async fn score(&mut self, flow: &Arc<Flow>, query: &Query, item: &Item) -> Score {
-        // TODO
-        Score::new(item.id, vec![0])
-    }
-}
-
-// impl Generator for Concat
-// dynamic concat??
-// impl Matcher for Substring
