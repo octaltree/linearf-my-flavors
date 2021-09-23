@@ -20,7 +20,7 @@ impl New for Rustdoc {
     }
 }
 
-impl HasSourceParams for Rustdoc {
+impl IsSource for Rustdoc {
     type Params = ();
 }
 
