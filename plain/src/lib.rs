@@ -6,9 +6,12 @@ mod sources {
 }
 
 mod matchers {
-    use linearf::session::Vars;
-    use linearf::{async_trait, New, Shared, State};
-    use linearf::{matcher::*, Item};
+    use linearf::{
+        async_trait,
+        matcher::{BlankParams, *},
+        session::Vars,
+        Item, New, Shared, State,
+    };
     use std::sync::Arc;
 
     pub struct Substring {
@@ -27,11 +30,11 @@ mod matchers {
     }
 
     impl IsMatcher for Substring {
-        type Params = ();
+        type Params = BlankParams;
     }
 
     #[async_trait]
-    impl SimpleScorer<()> for Substring {
+    impl SimpleScorer<BlankParams> for Substring {
         async fn score(
             &self,
             (vars, _): (&Arc<Vars>, &Arc<Self::Params>),
@@ -40,7 +43,7 @@ mod matchers {
             return if item.view_for_matcing().find(&vars.query).is_some() {
                 Score::new(item.id, vec![1])
             } else {
-                Score::new(item.id, vec![0])
+                Score::new(item.id, vec![])
             };
         }
 
