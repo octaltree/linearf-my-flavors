@@ -3,6 +3,7 @@ pub use sources::Concat;
 
 mod sources {
     pub struct Concat {}
+    pub struct Files {}
 }
 
 mod matchers {

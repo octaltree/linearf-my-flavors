@@ -8,3 +8,4 @@ edition = "2018"
 [dependencies]
 rustdoc-index = "0.2.0"
 linearf = { path = "../../linearf/model/core" }
+tokio = "1.12.0"

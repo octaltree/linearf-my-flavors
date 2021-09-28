@@ -30,12 +30,19 @@ impl SimpleGenerator<BlankParams> for Rustdoc {
         for i in 0..1000 {
             tx.chunk(
                 (0..1000)
-                    .map(|j| i + j + 1)
+                    .map(|j| i * 1000 + j + 1)
                     .map(|id| Item::new(id, "", MaybeUtf8::Utf8(i.to_string())))
                     .collect::<Vec<_>>(),
             )
             .await;
         }
+        //for i in 0..1000000 {
+        //    let tx = tx.clone();
+        //    tokio::spawn(async move {
+        //        tx.item(Item::new(i + 1, "", MaybeUtf8::Utf8(i.to_string())))
+        //            .await;
+        //    });
+        //}
     }
 
     async fn reusable(
