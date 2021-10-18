@@ -1,55 +1,59 @@
-use linearf::{
-    async_trait,
-    source::{BlankParams, *},
-    Item, MaybeUtf8, New, Shared, State, Vars,
-};
-use std::sync::Arc;
+use linearf::{item::*, source::*};
+use serde::{Deserialize, Serialize};
+use std::path::PathBuf;
 
-pub struct Rustdoc {
-    _state: Shared<State>,
+pub struct Rustdoc<L> {
+    _linearf: Weak<L>
 }
 
-impl New for Rustdoc {
-    fn new(_state: &Shared<State>) -> Self
+#[derive(Deserialize, Serialize, PartialEq)]
+pub struct RustdocParams {
+    dir: PathBuf
+}
+
+impl SourceParams for RustdocParams {}
+
+impl<L> IsSource for Rustdoc<L> {
+    type Params = RustdocParams;
+}
+
+impl<L> NewSource<L> for Rustdoc<L>
+where
+    L: linearf::Linearf + Send + Sync + 'static
+{
+    fn new(_linearf: Weak<L>) -> Source<<Self as IsSource>::Params>
     where
-        Self: Sized,
+        Self: Sized
     {
-        Self {
-            _state: _state.clone(),
-        }
+        Source::from_simple(Self { _linearf })
     }
 }
 
-impl IsSource for Rustdoc {
-    type Params = BlankParams;
-}
-
-#[async_trait]
-impl SimpleGenerator<BlankParams> for Rustdoc {
-    async fn generate(&self, tx: Transmitter, _senario: (&Arc<Vars>, &Arc<Self::Params>)) {
-        for i in 0..1000 {
-            tx.chunk(
-                (0..1000)
-                    .map(|j| i * 1000 + j + 1)
-                    .map(|id| Item::new(id, "", MaybeUtf8::Utf8(i.to_string())))
-                    .collect::<Vec<_>>(),
-            )
-            .await;
-        }
-        //for i in 0..1000000 {
-        //    let tx = tx.clone();
-        //    tokio::spawn(async move {
-        //        tx.item(Item::new(i + 1, "", MaybeUtf8::Utf8(i.to_string())))
-        //            .await;
-        //    });
-        //}
-    }
-
-    async fn reusable(
+impl<L> SimpleGenerator for Rustdoc<L> {
+    fn stream(
         &self,
-        _prev: (&Arc<Vars>, &Arc<Self::Params>),
-        _senario: (&Arc<Vars>, &Arc<Self::Params>),
-    ) -> bool {
-        false
+        (_, params): (&Arc<Vars>, &Arc<Self::Params>)
+    ) -> Pin<Box<dyn Stream<Item = Item> + Send + Sync>> {
+        todo!()
+        // let s = futures::stream::unfold(0..1000000, |mut it| async {
+        //    it.next().map(|i| {
+        //        let id = i + 1;
+        //        let item = Item::new(id, "number", MaybeUtf8::Utf8(i.to_string()));
+        //        (item, it)
+        //    })
+        //});
+        // Box::pin(s)
+    }
+
+    fn reusable(
+        &self,
+        (_, prev): (&Arc<Vars>, &Arc<Self::Params>),
+        (_, params): (&Arc<Vars>, &Arc<Self::Params>)
+    ) -> Reusable {
+        if prev == params {
+            Reusable::Cache
+        } else {
+            Reusable::None
+        }
     }
 }

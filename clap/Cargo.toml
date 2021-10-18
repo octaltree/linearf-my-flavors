@@ -7,4 +7,4 @@ edition = "2018"
 
 [dependencies]
 clap = "2.33.3"
-linearf = { path = "../../linearf/model/core" }
+linearf = { path = "../../lnf/model/core" }
