@@ -1,46 +1,30 @@
-pub use matchers::Substring;
-pub use sources::Concat;
+pub use substring::M as Substring;
 
-mod sources {
-    pub struct Concat {}
-    pub struct Files {}
-}
+mod substring {
+    use linearf::matcher::*;
 
-mod matchers {
-    use linearf::{
-        async_trait,
-        matcher::{BlankParams, *},
-        session::Vars,
-        Item, New, Shared, State,
-    };
-    use std::sync::Arc;
-
-    pub struct Substring {
-        _state: Shared<State>,
+    pub struct M<L> {
+        _linearf: Weak<L>
     }
 
-    impl New for Substring {
-        fn new(_state: &Shared<State>) -> Self
-        where
-            Self: Sized,
-        {
-            Self {
-                _state: _state.clone(),
-            }
-        }
-    }
-
-    impl IsMatcher for Substring {
+    impl<L> IsMatcher for M<L> {
         type Params = BlankParams;
     }
 
-    #[async_trait]
-    impl SimpleScorer<BlankParams> for Substring {
-        async fn score(
-            &self,
-            (vars, _): (&Arc<Vars>, &Arc<Self::Params>),
-            item: &Arc<Item>,
-        ) -> Score {
+    impl<L> NewMatcher<L> for M<L>
+    where
+        L: linearf::Linearf + Send + Sync + 'static
+    {
+        fn new(_linearf: Weak<L>) -> Matcher<<Self as IsMatcher>::Params>
+        where
+            Self: Sized
+        {
+            Matcher::from_simple(Self { _linearf })
+        }
+    }
+
+    impl<L> SimpleScorer for M<L> {
+        fn score(&self, (vars, _): (&Arc<Vars>, &Arc<Self::Params>), item: &Arc<Item>) -> Score {
             return if item.view_for_matcing().find(&vars.query).is_some() {
                 Score::new(item.id, vec![1])
             } else {
@@ -48,12 +32,16 @@ mod matchers {
             };
         }
 
-        async fn reusable(
+        fn reusable(
             &self,
             (prev, _): (&Arc<Vars>, &Arc<Self::Params>),
-            (senario, _): (&Arc<Vars>, &Arc<Self::Params>),
-        ) -> bool {
-            prev.query == senario.query
+            (senario, _): (&Arc<Vars>, &Arc<Self::Params>)
+        ) -> Reusable {
+            if prev.query == senario.query {
+                Reusable::Same
+            } else {
+                Reusable::None
+            }
         }
     }
 }

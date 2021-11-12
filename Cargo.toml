@@ -1,7 +1,4 @@
 [workspace]
 members = [
-  "clap",
   "plain",
-  "rustdoc",
-  "state"
-  ]
+]

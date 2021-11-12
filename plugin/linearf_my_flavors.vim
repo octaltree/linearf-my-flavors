@@ -14,5 +14,4 @@ function! s:a(d, name) abort
   call s:append(g:linearf_my_flavors#root_dir, a:d, a:name)
 endfunction
 
-call s:a('rustdoc', 'flavors_rustdoc')
 call s:a('plain', 'flavors_plain')
