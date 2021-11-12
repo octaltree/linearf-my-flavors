@@ -9,3 +9,4 @@ edition = "2021"
 async-stream = "0.3.2"
 linearf = { path = "../../lnf/model/core" }
 serde = "^1"
+futures = "^0.3"
