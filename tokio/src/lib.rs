@@ -74,6 +74,7 @@ mod command {
             let r = args(Command::new(&params.command))
                 .current_dir(&params.dir)
                 .stdout(Stdio::piped())
+                .stderr(Stdio::null())
                 .spawn();
             let out = match r {
                 Ok(tokio::process::Child {

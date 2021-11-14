@@ -128,9 +128,18 @@ mod substring {
         }
     }
 
+    fn parse_query(q: &str) -> Vec<&str> {
+        // TODO: support double quoted string
+        q.split_whitespace().collect()
+    }
+
     impl<L> SimpleScorer for M<L> {
         fn score(&self, (vars, _): (&Arc<Vars>, &Arc<Self::Params>), item: &Arc<Item>) -> Score {
-            return if item.view_for_matcing().find(&vars.query).is_some() {
+            let q = parse_query(&vars.query);
+            return if q
+                .into_iter()
+                .all(|q| item.view_for_matcing().find(q).is_some())
+            {
                 Score::new(item.id, vec![1])
             } else {
                 Score::new(item.id, vec![])
@@ -142,7 +151,11 @@ mod substring {
             (prev, _): (&Arc<Vars>, &Arc<Self::Params>),
             (senario, _): (&Arc<Vars>, &Arc<Self::Params>)
         ) -> Reusable {
-            if prev.query == senario.query {
+            let mut p = parse_query(&prev.query);
+            let mut v = parse_query(&senario.query);
+            p.sort_unstable();
+            v.sort_unstable();
+            if p == v {
                 Reusable::Same
             } else {
                 Reusable::None
