@@ -1,0 +1,10 @@
+[package]
+name = "tokio"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+linearf = { path = "../../lnf/model/core" }
+serde = "^1"
+tokio = { version = "^1", features = ["fs", "process", "io-util"] }
+tokio-stream = { version = "^0.1", features = ["io-util"] }

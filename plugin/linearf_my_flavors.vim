@@ -15,3 +15,4 @@ function! s:a(d, name) abort
 endfunction
 
 call s:a('plain', 'flavors_plain')
+call s:a('tokio', 'flavors_tokio')
