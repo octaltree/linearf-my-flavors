@@ -1,5 +1,5 @@
 local M = {
-  line = require('line')
+  line = require('linearf_my_flavors.line')
 }
 
 return M

@@ -10,6 +10,7 @@ mod identity {
     }
 
     #[derive(Deserialize, Serialize, PartialEq, Clone)]
+    #[serde(untagged)]
     pub enum Str {
         Utf8(String),
         Bytes(Vec<u8>)
