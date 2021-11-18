@@ -62,7 +62,7 @@ M.context_managers = {
             values = vim.fn.getbufline(bufnr, 1, '$')
         else
             values = {}
-            for l in vim.fn.getbufline(bufnr, 1, '$') do
+            for l in vim.fn.getbufline(bufnr, 1, '$')() do
                 table.insert(values, l)
             end
         end
