@@ -87,6 +87,17 @@ M.actions = {
         jump = function(items)
             vim.fn.cursor(items[1].value, 0)
         end
+    },
+    file = {
+        open = function(items)
+            local item = items[#items]
+            utils.command(vim.fn.printf("e %s", item.value))
+        end,
+        tabopen = function(items)
+            for _, x in ipairs(items) do
+                utils.command(vim.fn.printf("tabnew %s", x.value))
+            end
+        end
     }
 }
 
