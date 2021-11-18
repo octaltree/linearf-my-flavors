@@ -25,9 +25,12 @@ mod command {
     pub struct P {
         dir: PathBuf,
         command: PathBuf,
+        #[serde(default)]
         args: Vec<D>,
         #[serde(default)]
-        without_query: bool
+        with_query: bool,
+        #[serde(default)]
+        args_after_query: Vec<D>
     }
 
     impl SourceParams for P {}
@@ -64,10 +67,14 @@ mod command {
         ) -> Pin<Box<dyn Stream<Item = Item> + Send + Sync>> {
             let q = D::Utf8(vars.query.clone());
             let args = |mut c: Command| {
-                if params.without_query {
-                    c.args(params.args.iter());
+                if params.with_query {
+                    c.args(
+                        (params.args.iter())
+                            .chain(Some(&q).into_iter())
+                            .chain(params.args_after_query.iter())
+                    );
                 } else {
-                    c.args(params.args.iter().chain(Some(&q).into_iter()));
+                    c.args(params.args.iter().chain(params.args_after_query.iter()));
                 }
                 c
             };
@@ -99,7 +106,7 @@ mod command {
             (p, prev): (&Arc<Vars>, &Arc<Self::Params>),
             (v, params): (&Arc<Vars>, &Arc<Self::Params>)
         ) -> Reusable {
-            if prev == params && (params.without_query || p.query == v.query) {
+            if prev == params && (!params.with_query || p.query == v.query) {
                 Reusable::Cache
             } else {
                 Reusable::None

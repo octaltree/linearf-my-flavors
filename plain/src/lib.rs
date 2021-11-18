@@ -1,5 +1,5 @@
 pub use identity::Id as Identity;
-pub use line::S as Line;
+pub use line::C as FormatLine;
 pub use substring::M as Substring;
 
 mod identity {
@@ -166,109 +166,37 @@ mod substring {
 }
 
 mod line {
-    use linearf::{item::*, source::*};
+    use linearf::{converter::*, item::MaybeUtf8};
+    use std::marker::PhantomData;
 
-    pub struct S<L> {
-        _linearf: Weak<L>
+    pub struct C<L> {
+        phantom: PhantomData<L>
     }
 
-    #[derive(Deserialize, Serialize, PartialEq, Clone)]
-    #[serde(untagged)]
-    pub enum Str {
-        Utf8(String),
-        Bytes(Vec<u8>)
+    impl<L> IsConverter for C<L> {
+        type Params = Void;
     }
 
-    #[derive(Deserialize, Serialize, PartialEq)]
-    pub struct P {
-        lines: Vec<Str>,
-        name: Str
-    }
-
-    impl SourceParams for P {}
-
-    impl<L> IsSource for S<L> {
-        type Params = P;
-    }
-
-    impl<L> NewSource<L> for S<L>
+    impl<L> NewConverter<L> for C<L>
     where
         L: linearf::Linearf + Send + Sync + 'static
     {
-        fn new(_linearf: Weak<L>) -> Source<<Self as IsSource>::Params>
+        fn new(_linearf: Weak<L>) -> Converter<<Self as IsConverter>::Params>
         where
             Self: Sized
         {
-            Source::from_simple(Self { _linearf })
+            Converter::from_simple(Self {
+                phantom: PhantomData
+            })
         }
     }
 
-    fn format(n: u32, line: Str) -> Item {
-        // let item = Item::new(
-        //    id,
-        //    match x {
-        //        Str::Utf8(s) => MaybeUtf8::Utf8(s),
-        //        Str::Bytes(b) => MaybeUtf8::Bytes(b)
-        //    }
-        //);
-
-        // struct HexSlice<'a>(&'a [u8]);
-
-        // impl<'a> HexSlice<'a> {
-        //    fn new<T>(data: &'a T) -> HexSlice<'a>
-        //    where
-        //        T: ?Sized + AsRef<[u8]> + 'a,
-        //    {
-        //        HexSlice(data.as_ref())
-        //    }
-        //}
-
-        //// You can choose to implement multiple traits, like Lower and UpperHex
-        // impl fmt::Display for HexSlice<'_> {
-        //    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        //        for byte in self.0 {
-        //            // Decide if you want to pad the value or have spaces inbetween, etc.
-        //            write!(f, "\\x{:x}", byte)?;
-        //        }
-        //        Ok(())
-        //    }
-        //}
-        // let view_for_matcing = match &x {
-        //    Str::Utf8(s) => Cow::Borrowed
-        //};
-        // let mut item = todo!();
-        // item.view_for_matcing = match &x {
-        //    x
-        //};
-        todo!()
-    }
-
-    impl<L> SimpleGenerator for S<L> {
-        fn stream(
-            &self,
-            (_, params): (&Arc<Vars>, &Arc<Self::Params>)
-        ) -> Pin<Box<dyn Stream<Item = Item> + Send + Sync>> {
-            let it = params.lines.clone().into_iter().enumerate();
-            let s = futures::stream::unfold(it, |mut it| async {
-                it.next().map(|(i, x)| {
-                    let i: u32 = i.try_into().unwrap();
-                    let n = i + 1;
-                    (format(n, x), it)
-                })
-            });
-            Box::pin(s)
-        }
-
-        fn reusable(
-            &self,
-            (_, prev): (&Arc<Vars>, &Arc<Self::Params>),
-            (_, params): (&Arc<Vars>, &Arc<Self::Params>)
-        ) -> Reusable {
-            if prev == params {
-                Reusable::Same
-            } else {
-                Reusable::None
-            }
+    impl<L> SimpleConverter for C<L> {
+        fn convert(&self, mut item: Item) -> Item {
+            item.view_for_matcing = Some(item.value_lossy().to_string());
+            item.view = Some(format!("{}:{}", item.id, item.value_lossy())); // TODO: padding
+            item.value = MaybeUtf8::Utf8(item.id.to_string());
+            item
         }
     }
 }
