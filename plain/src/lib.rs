@@ -3,7 +3,7 @@ pub use line::C as FormatLine;
 pub use substring::M as Substring;
 
 mod identity {
-    use linearf::{item::*, matcher::*, source::*};
+    use linearf::{converter::*, item::*, matcher::*, source::*};
 
     pub struct Id<L> {
         _linearf: Weak<L>
@@ -103,6 +103,26 @@ mod identity {
         ) -> Reusable {
             Reusable::Same
         }
+    }
+
+    impl<L> IsConverter for Id<L> {
+        type Params = Void;
+    }
+
+    impl<L> NewConverter<L> for Id<L>
+    where
+        L: linearf::Linearf + Send + Sync + 'static
+    {
+        fn new(_linearf: Weak<L>) -> Converter<<Self as IsConverter>::Params>
+        where
+            Self: Sized
+        {
+            Converter::from_simple(Self { _linearf })
+        }
+    }
+
+    impl<L> SimpleConverter for Id<L> {
+        fn convert(&self, item: Item) -> Item { item }
     }
 }
 
