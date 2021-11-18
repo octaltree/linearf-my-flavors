@@ -55,19 +55,30 @@ function M.with_current_dir()
     return {source = {dir = vim.fn.getcwd(0)}}
 end
 
+local function decorate_linenr(lines)
+  local digits = function(x) return math.floor(math.log(x, 10)) + 1 end
+  local len_digits = digits(#lines)
+  local values = lines
+  for i, x in ipairs(values) do
+    local pad = len_digits - digits(i)
+    values[i] = string.format('%s%s:%s', string.rep(' ', pad), i, x)
+  end
+  return values
+end
+
 M.context_managers = {
     line = function(meta)
         local bufnr = utils.win_id2bufnr(meta.winid)
-        local values
+        local lines
         if utils.is_nvim() then
-            values = vim.fn.getbufline(bufnr, 1, '$')
+            lines = vim.fn.getbufline(bufnr, 1, '$')
         else
-            values = {}
+            lines = {}
             for l in vim.fn.getbufline(bufnr, 1, '$')() do
-                table.insert(values, l)
+                table.insert(lines, l)
             end
         end
-        return {source = {values = values}}
+        return {source = {values = decorate_linenr(lines)}}
     end,
     file_rg = M.with_current_dir,
     file_find = M.with_current_dir,
@@ -85,12 +96,16 @@ end
 M.actions = {
     line = {
         jump = function(items)
-            vim.fn.cursor(items[1].value, 0)
+            local item = items[1]
+            local n = string.match(item.value, '^[ ]*(%d+):.*$')
+            if n then
+              vim.fn.cursor(n, 0)
+            end
         end
     },
     file = {
         open = function(items)
-            local item = items[#items]
+            local item = items[1]
             utils.command(vim.fn.printf("e %s", item.value))
         end,
         tabopen = function(items)
