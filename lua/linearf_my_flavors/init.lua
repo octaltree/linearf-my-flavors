@@ -97,6 +97,16 @@ M.actions = {
             for _, x in ipairs(items) do
                 utils.command(vim.fn.printf("tabnew %s", x.value))
             end
+        end,
+        split = function(items)
+            for _, x in ipairs(items) do
+                utils.command(vim.fn.printf("sp %s", x.value))
+            end
+        end,
+        vsplit = function(items)
+            for _, x in ipairs(items) do
+                utils.command(vim.fn.printf("vs %s", x.value))
+            end
         end
     }
 }
