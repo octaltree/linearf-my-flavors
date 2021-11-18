@@ -48,6 +48,7 @@ M.senarios = {
     }
 }
 
+local linearf = require('linearf')
 local utils = require('linearf').utils
 
 function M.with_current_dir()
@@ -74,7 +75,20 @@ M.context_managers = {
     grep_grep = M.with_current_dir
 }
 
-M.actions = {}
+function M.hide_and(action)
+  return function(items, view_id)
+    linearf.view:hide(view_id)
+    return action(items, view_id)
+  end
+end
+
+M.actions = {
+    line = {
+        jump = function(items)
+            vim.fn.cursor(items[1].value, 0)
+        end
+    }
+}
 
 function M.merge(a, b)
     local a_is_dict = type(a) == 'table' and #a == 0
