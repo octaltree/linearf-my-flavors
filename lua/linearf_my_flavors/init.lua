@@ -95,6 +95,44 @@ do -- senario
         return ret
     end
 
+    local exit_q = {
+        linearf = {
+            list_nnoremap = {["<nowait>q"] = M.actions.view.hide},
+            querier_inoremap = {},
+            querier_nnoremap = {["<nowait>q"] = M.actions.view.hide}
+        }
+    }
+    local no_list_insert = {
+        linearf = {
+            list_nnoremap = {
+                ["i"] = M.actions.view.goto_querier_insert,
+                ["I"] = M.actions.view.goto_querier_insert,
+                ["a"] = M.actions.view.goto_querier_insert_a,
+                ["A"] = M.actions.view.goto_querier_insert
+            },
+            querier_inoremap = {},
+            querier_nnoremap = {}
+        }
+    }
+    local enter_list = {
+        linearf = {
+            list_nnoremap = {},
+            querier_inoremap = {
+                ["<CR>"] = M.normal_and(M.actions.view.goto_list)
+            },
+            querier_nnoremap = {["<CR>"] = M.actions.view.goto_list}
+        }
+    }
+    local escape_querier = {
+        linearf = {
+            list_nnoremap = {},
+            querier_inoremap = {
+                ["<ESC>"] = M.normal_and(M.actions.view.goto_list)
+            },
+            querier_nnoremap = {["<ESC>"] = M.actions.view.goto_list}
+        }
+    }
+
     M.senarios = {
         line = {
             linearf = {
@@ -149,41 +187,10 @@ do -- senario
                 args_after_query = {'.'}
             }
         },
-        exit_q = {
-            linearf = {
-                list_nnoremap = {["<nowait>q"] = M.actions.view.hide},
-                querier_inoremap = {},
-                querier_nnoremap = {["<nowait>q"] = M.actions.view.hide}
-            }
-        },
-        no_list_insert = {
-            linearf = {
-                list_nnoremap = {
-                    ["i"] = M.actions.view.goto_querier_insert,
-                    ["I"] = M.actions.view.goto_querier_insert,
-                    ["a"] = M.actions.view.goto_querier_insert_a,
-                    ["A"] = M.actions.view.goto_querier_insert
-                }
-            }
-        },
-        no_querier_normal = {
-            linearf = {
-                list_nnoremap = {
-                    ["i"] = M.actions.view.goto_querier_insert,
-                    ["I"] = M.actions.view.goto_querier_insert,
-                    ["a"] = M.actions.view.goto_querier_insert_a,
-                    ["A"] = M.actions.view.goto_querier_insert
-                },
-                querier_inoremap = {
-                    ["<ESC>"] = M.normal_and(M.actions.view.goto_list),
-                    ["<CR>"] = M.normal_and(M.actions.view.goto_list)
-                },
-                querier_nnoremap = {
-                    ["<ESC>"] = M.actions.view.goto_list,
-                    ["<CR>"] = M.actions.view.goto_list
-                }
-            }
-        }
+        exit_q = exit_q,
+        no_list_insert = no_list_insert,
+        enter_list = enter_list,
+        no_querier_normal = escape_querier
     }
 end
 
