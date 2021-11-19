@@ -175,7 +175,8 @@ do -- senario
                     '-g',
                     '!.git'
                 }, -- filename:line:col:body
-                with_query = true
+                with_query = true,
+                args_after_query = {}
             }
         },
         grep_grep = {
