@@ -231,7 +231,8 @@ do -- senario
                     '!.git'
                 },
                 with_query = true,
-                args_after_query = {}
+                args_after_query = {},
+                empty_grep = true
             }
         },
         grep_grep = {
@@ -244,7 +245,8 @@ do -- senario
                 command = "grep",
                 args = {'-nHR', '-E'},
                 with_query = true,
-                args_after_query = {'.'}
+                args_after_query = {'.'},
+                empty_grep = false
             }
         },
         exit_q = exit_q,
