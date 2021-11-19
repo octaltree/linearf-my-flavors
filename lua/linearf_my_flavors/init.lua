@@ -19,6 +19,22 @@ do -- action
         end
     end
 
+    local function parse_grep_format(line)
+        -- Both filename and body can have: and integers so they cannot be parsed exactly.
+        -- At the source stage, the surrounding lines are a hint, but here it is not
+        -- Return the greedy
+        local l, r = line:find(':%d+:')
+        if l == nil then return end
+        local f = line:sub(0, l == 0 and 0 or l - 1)
+        local ln = tonumber(line:sub(l + 1, r - 1))
+        local cn = nil
+        do
+            local cl, cr = line:find('^:%d+:', r)
+            if cl ~= nil then cn = tonumber(line:sub(cl + 1, cr - 1)) end
+        end
+        return f, ln, cn
+    end
+
     M.actions = {
         line = {
             jump = function(items)
@@ -66,6 +82,41 @@ do -- action
             end,
             goto_querier_insert_a = function(items, view_id)
                 return linearf.view:goto_querier_insert_a(items, view_id)
+            end
+        },
+        grep = {
+            open = function(items)
+                local item = items[1]
+                local f, l, c = parse_grep_format(item.value)
+                if f then utils.command(vim.fn.printf("e %s", f)) end
+                if l then vim.fn.cursor(l, c or 0) end
+            end,
+            tabopen = function(items)
+                for _, item in ipairs(items) do
+                    local f, l, c = parse_grep_format(item.value)
+                    if f then
+                        utils.command(vim.fn.printf("tabnew %s", f))
+                    end
+                    if l then vim.fn.cursor(l, c or 0) end
+                end
+            end,
+            split = function(items)
+                for _, item in ipairs(items) do
+                    local f, l, c = parse_grep_format(item.value)
+                    if f then
+                        utils.command(vim.fn.printf("sp %s", f))
+                    end
+                    if l then vim.fn.cursor(l, c or 0) end
+                end
+            end,
+            vsplit = function(items)
+                for _, item in ipairs(items) do
+                    local f, l, c = parse_grep_format(item.value)
+                    if f then
+                        utils.command(vim.fn.printf("vs %s", f))
+                    end
+                    if l then vim.fn.cursor(l, c or 0) end
+                end
             end
         }
     }
