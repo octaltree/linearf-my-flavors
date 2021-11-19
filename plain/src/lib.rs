@@ -186,7 +186,7 @@ mod substring {
 }
 
 mod line {
-    use linearf::{converter::*, item::MaybeUtf8};
+    use linearf::converter::*;
     use std::marker::PhantomData;
 
     pub struct C<L> {
