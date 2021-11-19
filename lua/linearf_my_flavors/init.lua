@@ -193,7 +193,11 @@ do -- senario
             }
         },
         file_rg = {
-            linearf = {source = "command", matcher = "substring"},
+            linearf = {
+                source = "command",
+                matcher = "substring",
+                dispose_flow = true
+            },
             source = {
                 command = "rg",
                 args = {'--follow', '--hidden', '--files', '-g', '!.git'} -- filename only
