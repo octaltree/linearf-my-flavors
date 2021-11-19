@@ -140,7 +140,7 @@ do -- senario
                 matcher = 'substring',
                 converters = {'format_line'}
             }
-        }, -- body only
+        },
         file_rg = {
             linearf = {source = "command", matcher = "substring"},
             source = {
@@ -160,11 +160,15 @@ do -- senario
                     '-type',
                     'f',
                     '-print'
-                } -- filename only
+                }
             }
         },
         grep_rg = {
-            linearf = {source = "command", matcher = "identity"},
+            linearf = {
+                source = "command",
+                matcher = "identity",
+                dispose_flow = true
+            },
             source = {
                 command = "rg",
                 args = {
@@ -174,16 +178,20 @@ do -- senario
                     '--smart-case',
                     '-g',
                     '!.git'
-                }, -- filename:line:col:body
+                },
                 with_query = true,
                 args_after_query = {}
             }
         },
         grep_grep = {
-            linearf = {source = "command", matcher = "identity"},
+            linearf = {
+                source = "command",
+                matcher = "identity",
+                dispose_flow = true
+            },
             source = {
                 command = "grep",
-                args = {'-nHR', '-E'}, -- filename:line:body
+                args = {'-nHR', '-E'},
                 with_query = true,
                 args_after_query = {'.'}
             }
