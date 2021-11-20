@@ -30,7 +30,9 @@ mod command {
         #[serde(default)]
         with_query: bool,
         #[serde(default)]
-        args_after_query: Vec<D>
+        args_after_query: Vec<D>,
+        #[serde(default)]
+        empty_grep: bool
     }
 
     impl SourceParams for P {}
@@ -65,7 +67,11 @@ mod command {
             &self,
             (vars, params): (&Arc<Vars>, &Arc<Self::Params>)
         ) -> Pin<Box<dyn Stream<Item = Item> + Send + Sync>> {
-            let q = D::Utf8(vars.query.clone());
+            let q = D::Utf8(if vars.query.is_empty() && params.empty_grep {
+                "^".to_string()
+            } else {
+                vars.query.clone()
+            });
             let args = |mut c: Command| {
                 if params.with_query {
                     c.args(

@@ -186,7 +186,7 @@ mod substring {
 }
 
 mod line {
-    use linearf::{converter::*, item::MaybeUtf8};
+    use linearf::converter::*;
     use std::marker::PhantomData;
 
     pub struct C<L> {
@@ -213,10 +213,18 @@ mod line {
 
     impl<L> SimpleConverter for C<L> {
         fn convert(&self, mut item: Item) -> Item {
-            item.view_for_matcing = Some(item.value_lossy().to_string());
-            item.view = Some(format!("{}:{}", item.id, item.value_lossy())); // TODO: padding
-            item.value = MaybeUtf8::Utf8(item.id.to_string());
+            let lossy = item.value_lossy();
+            item.view_for_matcing = Some(body(&lossy).to_string());
             item
         }
+    }
+
+    fn body(s: &str) -> &str {
+        let byte = s.find(':');
+        let from = match byte {
+            Some(i) => i + 1,
+            None => 0
+        };
+        &s[from..]
     }
 }
