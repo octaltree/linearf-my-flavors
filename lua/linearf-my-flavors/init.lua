@@ -146,7 +146,7 @@ do -- senario
         return ret
     end
 
-    local exit_q = {
+    local quit = {
         linearf = {
             list_nnoremap = {["<nowait>q"] = M.actions.view.hide},
             querier_inoremap = {},
@@ -253,7 +253,7 @@ do -- senario
                 empty_grep = false
             }
         },
-        exit_q = exit_q,
+        quit = quit,
         no_list_insert = no_list_insert,
         enter_list = enter_list,
         no_querier_normal = escape_querier
