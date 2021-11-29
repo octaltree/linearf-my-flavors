@@ -3,3 +3,6 @@ members = [
   "plain",
   "tokio"
 ]
+exclude = [
+  "clap"
+]

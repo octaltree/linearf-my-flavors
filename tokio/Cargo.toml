@@ -1,7 +1,7 @@
 [package]
-name = "tokio"
-version = "0.1.0"
 edition = "2021"
+name = "flavors_tokio"
+version = "0.1.0"
 
 [dependencies]
 linearf = { path = "../../lnf/model/core" }

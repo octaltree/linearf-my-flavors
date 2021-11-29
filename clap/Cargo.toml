@@ -1,0 +1,11 @@
+[package]
+edition = "2021"
+name = "flavors_clap"
+version = "0.1.0"
+
+[dependencies]
+linearf = { path = "../../lnf/model/core" }
+printer = { git = "https://github.com/liuchengxu/vim-clap" }
+filter = { git = "https://github.com/liuchengxu/vim-clap", default-features = false }
+futures = "^0.3"
+serde = "^1"
