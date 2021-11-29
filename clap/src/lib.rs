@@ -1,3 +1,5 @@
+pub use clap::M as Clap;
+
 mod clap {
     use filter::{
         matcher::{Bonus, FuzzyAlgorithm, MatchType, Query},
@@ -28,14 +30,15 @@ mod clap {
     impl<L> SimpleScorer for M<L> {
         fn score(&self, (vars, _): (&Arc<Vars>, &Arc<Self::Params>), item: &Arc<Item>) -> Score {
             let query: Query = Query::from(&*vars.query);
-            let matcher =
-                filter::matcher::Matcher::with_bonuses(FuzzyAlgorithm::Fzy, todo!(), todo!());
+            let bonuses = vec![Bonus::FileName];
+            let ty = MatchType::Full;
+            let matcher = filter::matcher::Matcher::with_bonuses(FuzzyAlgorithm::Fzy, ty, bonuses);
             let result =
                 match matcher.match_query(&SourceItem::from(&*item.view_for_matcing()), &query) {
                     Some(x) => x,
                     None => return Score::new_excluded()
                 };
-            Score::value(item.id, result.0)
+            Score::value(item.id, -1 * result.0)
         }
 
         fn reusable(
