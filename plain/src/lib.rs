@@ -156,6 +156,9 @@ mod substring {
 
     impl<L> SimpleScorer for M<L> {
         fn score(&self, (vars, _): (&Arc<Vars>, &Arc<Self::Params>), item: &Arc<Item>) -> Score {
+            if vars.query.is_empty() {
+                return Score::value(item.id, 1);
+            }
             let q = parse_query(&vars.query);
             if q.into_iter()
                 .all(|q| item.view_for_matcing().find(q).is_some())

@@ -29,6 +29,9 @@ mod clap {
 
     impl<L> SimpleScorer for M<L> {
         fn score(&self, (vars, _): (&Arc<Vars>, &Arc<Self::Params>), item: &Arc<Item>) -> Score {
+            if vars.query.is_empty() {
+                return Score::value(item.id, 1);
+            }
             let query: Query = Query::from(&*vars.query);
             let bonuses = vec![Bonus::FileName];
             let ty = MatchType::Full;
