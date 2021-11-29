@@ -195,7 +195,7 @@ do -- senario
         file_rg = {
             linearf = {
                 source = "command",
-                matcher = "substring",
+                matcher = "clap",
                 dispose_flow = true
             },
             source = {
@@ -204,7 +204,7 @@ do -- senario
             }
         },
         file_find = {
-            linearf = {source = "command", matcher = "substring"},
+            linearf = {source = "command", matcher = "clap"},
             source = {
                 command = "find",
                 args = {
