@@ -93,7 +93,7 @@ mod identity {
 
     impl<L> SimpleScorer for Id<L> {
         fn score(&self, (_vars, _): (&Arc<Vars>, &Arc<Self::Params>), item: &Arc<Item>) -> Score {
-            return Score::new(item.id, vec![1]);
+            Score::value(item.id, 1)
         }
 
         fn reusable(
@@ -157,14 +157,13 @@ mod substring {
     impl<L> SimpleScorer for M<L> {
         fn score(&self, (vars, _): (&Arc<Vars>, &Arc<Self::Params>), item: &Arc<Item>) -> Score {
             let q = parse_query(&vars.query);
-            return if q
-                .into_iter()
+            if q.into_iter()
                 .all(|q| item.view_for_matcing().find(q).is_some())
             {
-                Score::new(item.id, vec![1])
+                Score::value(item.id, 1)
             } else {
-                Score::new(item.id, vec![])
-            };
+                Score::new_excluded()
+            }
         }
 
         fn reusable(
