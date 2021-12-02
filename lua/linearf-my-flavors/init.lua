@@ -122,7 +122,7 @@ do -- action
     }
 end
 
-do -- senario
+do -- scenario
     local function _merge(a, b)
         local a_is_dict = type(a) == 'table' and #a == 0
         local b_is_dict = type(b) == 'table' and #b == 0
@@ -139,10 +139,10 @@ do -- senario
         return ret
     end
 
-    function M.merge(senarios)
-        if #senarios == 0 then return {} end
-        local ret = senarios[1]
-        for i = 2, #senarios do ret = _merge(ret, senarios[i] or {}) end
+    function M.merge(scenarios)
+        if #scenarios == 0 then return {} end
+        local ret = scenarios[1]
+        for i = 2, #scenarios do ret = _merge(ret, scenarios[i] or {}) end
         return ret
     end
 
@@ -184,7 +184,7 @@ do -- senario
         }
     }
 
-    M.senarios = {
+    M.scenarios = {
         line = {
             linearf = {
                 source = 'identity',

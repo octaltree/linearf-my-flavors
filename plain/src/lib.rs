@@ -99,7 +99,7 @@ mod identity {
         fn reusable(
             &self,
             (_prev, _): (&Arc<Vars>, &Arc<Self::Params>),
-            (_senario, _): (&Arc<Vars>, &Arc<Self::Params>)
+            (_scenario, _): (&Arc<Vars>, &Arc<Self::Params>)
         ) -> Reusable {
             Reusable::Same
         }
@@ -172,10 +172,10 @@ mod substring {
         fn reusable(
             &self,
             (prev, _): (&Arc<Vars>, &Arc<Self::Params>),
-            (senario, _): (&Arc<Vars>, &Arc<Self::Params>)
+            (scenario, _): (&Arc<Vars>, &Arc<Self::Params>)
         ) -> Reusable {
             let mut p = parse_query(&prev.query);
-            let mut v = parse_query(&senario.query);
+            let mut v = parse_query(&scenario.query);
             p.sort_unstable();
             v.sort_unstable();
             if p == v {

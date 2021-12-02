@@ -47,9 +47,9 @@ mod clap {
         fn reusable(
             &self,
             (prev, _): (&Arc<Vars>, &Arc<Self::Params>),
-            (senario, _): (&Arc<Vars>, &Arc<Self::Params>)
+            (scenario, _): (&Arc<Vars>, &Arc<Self::Params>)
         ) -> Reusable {
-            if prev.query == senario.query {
+            if prev.query == scenario.query {
                 Reusable::Same
             } else {
                 Reusable::None
