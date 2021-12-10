@@ -46,7 +46,9 @@ do -- action
         file = {
             open = function(items)
                 local item = items[1]
-                utils.command(vim.fn.printf("e %s", item.value))
+                if vim.fn.expand('%') ~= item.value then
+                    utils.command(vim.fn.printf("e %s", item.value))
+                end
             end,
             tabopen = function(items)
                 for _, x in ipairs(items) do
@@ -88,7 +90,9 @@ do -- action
             open = function(items)
                 local item = items[1]
                 local f, l, c = parse_grep_format(item.value)
-                if f then utils.command(vim.fn.printf("e %s", f)) end
+                if f and vim.fn.expand('%') ~= f then
+                    utils.command(vim.fn.printf("e %s", f))
+                end
                 if l then vim.fn.cursor(l, c or 0) end
             end,
             tabopen = function(items)
