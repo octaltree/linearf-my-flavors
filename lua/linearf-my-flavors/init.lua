@@ -35,6 +35,44 @@ do -- action
         return f, ln, cn
     end
 
+    local grep = {
+        open = function(items)
+            local item = items[1]
+            local f, l, c = parse_grep_format(item.value)
+            if f and vim.fn.expand('%') ~= f then
+                utils.command(vim.fn.printf("e %s", f))
+            end
+            if l then vim.fn.cursor(l, c or 0) end
+        end,
+        tabopen = function(items)
+            for _, item in ipairs(items) do
+                local f, l, c = parse_grep_format(item.value)
+                if f then
+                    utils.command(vim.fn.printf("tabnew %s", f))
+                end
+                if l then vim.fn.cursor(l, c or 0) end
+            end
+        end,
+        split = function(items)
+            for _, item in ipairs(items) do
+                local f, l, c = parse_grep_format(item.value)
+                if f then
+                    utils.command(vim.fn.printf("sp %s", f))
+                end
+                if l then vim.fn.cursor(l, c or 0) end
+            end
+        end,
+        vsplit = function(items)
+            for _, item in ipairs(items) do
+                local f, l, c = parse_grep_format(item.value)
+                if f then
+                    utils.command(vim.fn.printf("vs %s", f))
+                end
+                if l then vim.fn.cursor(l, c or 0) end
+            end
+        end
+    }
+
     M.actions = {
         line = {
             jump = function(items)
@@ -86,43 +124,8 @@ do -- action
                 return linearf.view:goto_querier_insert_a(items, view_id)
             end
         },
-        grep = {
-            open = function(items)
-                local item = items[1]
-                local f, l, c = parse_grep_format(item.value)
-                if f and vim.fn.expand('%') ~= f then
-                    utils.command(vim.fn.printf("e %s", f))
-                end
-                if l then vim.fn.cursor(l, c or 0) end
-            end,
-            tabopen = function(items)
-                for _, item in ipairs(items) do
-                    local f, l, c = parse_grep_format(item.value)
-                    if f then
-                        utils.command(vim.fn.printf("tabnew %s", f))
-                    end
-                    if l then vim.fn.cursor(l, c or 0) end
-                end
-            end,
-            split = function(items)
-                for _, item in ipairs(items) do
-                    local f, l, c = parse_grep_format(item.value)
-                    if f then
-                        utils.command(vim.fn.printf("sp %s", f))
-                    end
-                    if l then vim.fn.cursor(l, c or 0) end
-                end
-            end,
-            vsplit = function(items)
-                for _, item in ipairs(items) do
-                    local f, l, c = parse_grep_format(item.value)
-                    if f then
-                        utils.command(vim.fn.printf("vs %s", f))
-                    end
-                    if l then vim.fn.cursor(l, c or 0) end
-                end
-            end
-        }
+        grep = grep,
+        dir_line = grep
     }
 end
 
@@ -257,6 +260,30 @@ do -- scenario
                 empty_grep = false
             }
         },
+        dir_line_grep = {
+            linearf = {source = "command", matcher = "substring"},
+            source = {
+                command = "grep",
+                args = {'-nHR', '-E', '', '.'},
+                with_query = false
+            }
+        },
+        dir_line_rg = {
+            linearf = {source = "command", matcher = "substring"},
+            source = {
+                command = "rg",
+                args = {
+                    '--vimgrep',
+                    '--no-column',
+                    '--hidden',
+                    '--follow',
+                    '--smart-case',
+                    '-g',
+                    '!.git',
+                    '^'
+                }
+            }
+        },
         quit = quit,
         no_list_insert = no_list_insert,
         enter_list = enter_list,
@@ -303,7 +330,9 @@ do -- context_manager
         file_rg = M.with_current_dir,
         file_find = M.with_current_dir,
         grep_rg = M.with_current_dir,
-        grep_grep = M.with_current_dir
+        grep_grep = M.with_current_dir,
+        dir_line_grep = M.with_current_dir,
+        dir_line_rg = M.with_current_dir
     }
 end
 
