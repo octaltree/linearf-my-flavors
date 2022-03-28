@@ -35,13 +35,13 @@ mod clap {
             let query: Query = Query::from(&*vars.query);
             let bonuses = vec![Bonus::FileName];
             let ty = MatchingTextKind::Full;
-            let matcher = filter::matcher::Matcher::with_bonuses(FuzzyAlgorithm::Fzy, ty, bonuses);
+            let matcher = filter::matcher::Matcher::with_bonuses(bonuses, FuzzyAlgorithm::Fzy, ty);
             let result =
                 match matcher.match_query(&SourceItem::from(&*item.view_for_matcing()), &query) {
                     Some(x) => x,
                     None => return Score::new_excluded()
                 };
-            Score::value(item.id, -1 * result.0)
+            Score::value(item.id, -result.score)
         }
 
         fn reusable(
