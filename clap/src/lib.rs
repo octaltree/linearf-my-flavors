@@ -2,7 +2,7 @@ pub use clap::M as Clap;
 
 mod clap {
     use filter::{
-        matcher::{Bonus, FuzzyAlgorithm, MatchType, Query},
+        matcher::{Bonus, FuzzyAlgorithm, MatchingTextKind, Query},
         SourceItem
     };
     use linearf::matcher::*;
@@ -34,7 +34,7 @@ mod clap {
             }
             let query: Query = Query::from(&*vars.query);
             let bonuses = vec![Bonus::FileName];
-            let ty = MatchType::Full;
+            let ty = MatchingTextKind::Full;
             let matcher = filter::matcher::Matcher::with_bonuses(FuzzyAlgorithm::Fzy, ty, bonuses);
             let result =
                 match matcher.match_query(&SourceItem::from(&*item.view_for_matcing()), &query) {
