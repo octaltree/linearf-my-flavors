@@ -284,6 +284,7 @@ do -- scenario
                 }
             }
         },
+        rustdoc = {linearf = {source = "rustdoc", matcher = "substring"}},
         quit = quit,
         no_list_insert = no_list_insert,
         enter_list = enter_list,
@@ -332,7 +333,8 @@ do -- context_manager
         grep_rg = M.with_current_dir,
         grep_grep = M.with_current_dir,
         dir_line_grep = M.with_current_dir,
-        dir_line_rg = M.with_current_dir
+        dir_line_rg = M.with_current_dir,
+        rustdoc = M.with_current_dir
     }
 end
 
