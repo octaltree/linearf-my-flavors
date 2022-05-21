@@ -1,7 +1,8 @@
 [workspace]
 members = [
   "plain",
-  "tokio"
+  "tokio",
+  "rustdoc"
 ]
 exclude = [
   "clap"

@@ -1,0 +1,13 @@
+[package]
+name = "flavors_rustdoc"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+linearf = { path = "../../lnf/model/core" }
+rustdoc-index = "0.5.0"
+rayon = "1.5.2"
+serde = "^1"
+futures = "^0.3"
+tokio = { version = "^1.14.0", features = ["rt-multi-thread", "sync", "macros"] }
+tokio-stream = { version = "^0.1", features = ["io-util"] }
