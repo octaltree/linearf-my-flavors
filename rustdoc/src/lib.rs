@@ -7,7 +7,7 @@ mod rustdoc {
     use tokio_stream::wrappers::UnboundedReceiverStream;
 
     pub struct S<L> {
-        _linearf: Weak<L>
+        linearf: Weak<L>
     }
 
     #[derive(Deserialize, Serialize, PartialEq)]
@@ -29,18 +29,26 @@ mod rustdoc {
         where
             Self: Sized
         {
-            Source::from_simple(Self { _linearf: linearf })
+            Source::from_simple(Self { linearf })
         }
     }
 
-    impl<L> SimpleGenerator for S<L> {
+    impl<L> SimpleGenerator for S<L>
+    where
+        L: linearf::Linearf
+    {
         fn stream(
             &self,
             (_vars, params): (&Arc<Vars>, &Arc<Self::Params>)
         ) -> Pin<Box<dyn Stream<Item = Item> + Send + Sync>> {
             let (tx, rx) = tokio::sync::mpsc::unbounded_channel();
             let dir = Some(params.dir.clone());
-            tokio::spawn(async move {
+            let lnf = match self.linearf.upgrade() {
+                Some(l) => l,
+                None => return Box::pin(futures::stream::empty())
+            };
+            let rt = lnf.runtime();
+            rt.spawn(async move {
                 use rustdoc_index::{
                     doc::Crate, read_search_index, search_index::search_indexes, Error
                 };
