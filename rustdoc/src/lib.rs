@@ -1,3 +1,4 @@
+pub use item_uri::A as ItemUri;
 pub use rustdoc::S as Rustdoc;
 
 mod rustdoc {
@@ -87,6 +88,56 @@ mod rustdoc {
             } else {
                 Reusable::None
             }
+        }
+    }
+}
+
+mod item_uri {
+    use linearf::action::*;
+    use std::path::PathBuf;
+
+    pub struct A<L> {
+        linearf: Weak<L>
+    }
+
+    #[derive(Deserialize, Serialize, PartialEq)]
+    pub struct P {
+        dir: PathBuf,
+        value: String
+    }
+
+    pub type R = Option<String>;
+
+    impl ActionParams for P {}
+
+    impl<L> IsAction for A<L> {
+        type Params = P;
+        type Result = R;
+    }
+
+    impl<L> NewAction<L> for A<L>
+    where
+        L: linearf::Linearf + Send + Sync + 'static
+    {
+        fn new(linearf: Weak<L>) -> Action<<Self as IsAction>::Params, <Self as IsAction>::Result>
+        where
+            Self: Sized
+        {
+            Action::from_simple(Self { linearf })
+        }
+    }
+
+    impl<L> SimpleTask for A<L>
+    where
+        L: linearf::Linearf
+    {
+        fn run(&self, params: &Arc<<Self as IsAction>::Params>) -> <Self as IsAction>::Result {
+            let lnf = self.linearf.upgrade()?;
+            lnf.runtime()
+                .block_on(async {
+                    rustdoc_index::location::location_from_line(&params.value).await
+                })
+                .ok()
         }
     }
 }
