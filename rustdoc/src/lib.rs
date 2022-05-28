@@ -1,5 +1,5 @@
-pub use item_uri::A as ItemUri;
 pub use rustdoc::S as Rustdoc;
+pub use rustdoc_item::A as RustdocItem;
 
 mod rustdoc {
     use linearf::{item::*, source::*};
@@ -92,7 +92,7 @@ mod rustdoc {
     }
 }
 
-mod item_uri {
+mod rustdoc_item {
     use linearf::action::*;
     use std::path::PathBuf;
 
@@ -135,7 +135,11 @@ mod item_uri {
             let lnf = self.linearf.upgrade()?;
             lnf.runtime()
                 .block_on(async {
-                    rustdoc_index::location::location_from_line(&params.value).await
+                    rustdoc_index::location::location_from_line(
+                        &params.value,
+                        Some(params.dir.clone())
+                    )
+                    .await
                 })
                 .ok()
         }

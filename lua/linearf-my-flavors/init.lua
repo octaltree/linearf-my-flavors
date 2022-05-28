@@ -5,17 +5,17 @@ do -- action
     local utils = linearf.utils
 
     function M.hide_and(action)
-        return function(items, view_id)
-            linearf.view:hide(view_id)
-            action(items, view_id)
+        return function(items, ctx)
+            linearf.view:hide(ctx)
+            action(items, ctx)
             return true
         end
     end
 
     function M.normal_and(action)
-        return function(items, view_id)
+        return function(items, ctx)
             utils.eval('feedkeys("\\<ESC>", "n")')
-            return action(items, view_id)
+            return action(items, ctx)
         end
     end
 
@@ -105,23 +105,31 @@ do -- action
             end
         },
         view = {
-            hide = function(items, view_id)
-                return linearf.view:hide(items, view_id)
+            hide = function(items, ctx)
+                return linearf.view:hide(items, ctx)
             end,
-            goto_orig = function(items, view_id)
-                return linearf.view:goto_orig(items, view_id)
+            goto_orig = function(items, ctx)
+                return linearf.view:goto_orig(items, ctx)
             end,
-            goto_list = function(items, view_id)
-                return linearf.view:goto_list(items, view_id)
+            goto_list = function(items, ctx)
+                return linearf.view:goto_list(items, ctx)
             end,
-            goto_querier = function(items, view_id)
-                return linearf.view:goto_querier(items, view_id)
+            goto_querier = function(items, ctx)
+                return linearf.view:goto_querier(items, ctx)
             end,
-            goto_querier_insert = function(items, view_id)
-                return linearf.view:goto_querier_insert(items, view_id)
+            goto_querier_insert = function(items, ctx)
+                return linearf.view:goto_querier_insert(items, ctx)
             end,
-            goto_querier_insert_a = function(items, view_id)
-                return linearf.view:goto_querier_insert_a(items, view_id)
+            goto_querier_insert_a = function(items, ctx)
+                return linearf.view:goto_querier_insert_a(items, ctx)
+            end
+        },
+        rustdoc = {
+            open_firefox = function(items, ctx)
+              local dir = (ctx.flow.scenario.source or {}).dir
+              local args = {dir = dir, value = items[1].value}
+              uri = linearf.bridge.dispatch_action('rustdoc_item', args):unwrap()
+              utils.command(vim.fn.printf("silent ! firefox %s", uri))
             end
         },
         grep = grep,
