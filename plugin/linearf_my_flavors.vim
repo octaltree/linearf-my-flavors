@@ -17,3 +17,4 @@ endfunction
 call s:a('plain', 'flavors_plain')
 call s:a('tokio', 'flavors_tokio')
 call s:a('clap', 'flavors_clap')
+call s:a('rustdoc', 'flavors_rustdoc')
