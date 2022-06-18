@@ -128,8 +128,9 @@ do -- action
             open_firefox = function(items, ctx)
               local dir = (ctx.flow.scenario.source or {}).dir
               local args = {dir = dir, value = items[1].value}
-              uri = linearf.bridge.dispatch_action('rustdoc_item', args):unwrap()
-              utils.command(vim.fn.printf("silent ! firefox %s", uri))
+              local uri = linearf.bridge.dispatch_action('rustdoc_item', args):unwrap()
+              local esc = uri:gsub('#', '\\#')
+              utils.command(vim.fn.printf("silent ! firefox %s", esc))
             end
         },
         grep = grep,
