@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 linearf = { path = "../../lnf/model/core" }
-rustdoc-index = "0.6.0"
+rustdoc-index = "0.7.0"
 rayon = "1.5.2"
 serde = "^1"
 futures = "^0.3"
